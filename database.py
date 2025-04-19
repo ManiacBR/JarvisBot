@@ -27,7 +27,7 @@ class ConversationDatabase:
                 (guild_id, message, role, datetime.now())
             )
 
-    def get_context(self, guild_id, max_tokens=100000, model='gpt-4.1-2025-04-14'):
+    def get_context(self, guild_id, max_tokens=100000, model='gpt-4'):
         cursor = self.conn.cursor()
         cursor.execute(
             "SELECT role, message FROM conversations WHERE guild_id = ? ORDER BY timestamp ASC",
@@ -35,7 +35,10 @@ class ConversationDatabase:
         )
         rows = cursor.fetchall()
         context = [{"role": r, "content": m} for r, m in rows]
-        encoding = tiktoken.encoding_for_model(model)
+        try:
+            encoding = tiktoken.encoding_for_model(model)
+        except KeyError:
+            encoding = tiktoken.get_encoding("cl100k_base")
         while context and sum(len(encoding.encode(c["content"])) for c in context) > max_tokens:
             context.pop(0)
         return context
