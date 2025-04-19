@@ -42,7 +42,7 @@ def is_message_to_bot(message: discord.Message):
 async def on_ready():
     global BOT_NAME
     BOT_NAME = client.user.display_name
-    print(f'Bot {client.user.name} conectado com sucesso.')Ótimo! Aqui está a **Parte 2** do `main.py` avançado, seguindo a estrutura da Parte 1:
+    print(f'Bot {client.user.name} conectado com sucesso.')
 
 @client.event
 async def on_message(message):
