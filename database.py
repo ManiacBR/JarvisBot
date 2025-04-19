@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import datetime
+import tiktoken
 
 class ConversationDatabase:
     def __init__(self, db_name="conversations.db"):
@@ -26,16 +27,17 @@ class ConversationDatabase:
                 (guild_id, message, role, datetime.now())
             )
 
-    def get_context(self, guild_id, max_messages=40):
+    def get_context(self, guild_id, max_tokens=100000, model='gpt-4.1-2025-04-14'):
         cursor = self.conn.cursor()
         cursor.execute(
             "SELECT role, message FROM conversations WHERE guild_id = ? ORDER BY timestamp ASC",
             (guild_id,)
         )
         rows = cursor.fetchall()
-        context = [{"role": role, "content": msg} for role, msg in rows]
-        if len(context) > max_messages:
-            context = context[-max_messages:]
+        context = [{"role": r, "content": m} for r, m in rows]
+        encoding = tiktoken.encoding_for_model(model)
+        while context and sum(len(encoding.encode(c["content"])) for c in context) > max_tokens:
+            context.pop(0)
         return context
 
     def clear_context(self, guild_id):
