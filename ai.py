@@ -6,7 +6,7 @@ import tiktoken
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-def estimate_tokens(messages, model="gpt-4"):
+def estimate_tokens(messages, model="gpt-4.1-2025-04-14"):
     encoding = tiktoken.encoding_for_model(model)
     total = 0
     for msg in messages:
