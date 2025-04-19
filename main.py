@@ -62,7 +62,7 @@ async def on_message(message):
         return
 
     # Recupera o contexto longo por guild
-    context = db.get_context(guild_id=str(message.guild.id), token_limit=7000)
+    context = db.get_context(guild_id=str(message.guild.id), max_tokens=7000)
     context.append({"role": "user", "content": user_input})
 
     # Pede resposta ao GPT
